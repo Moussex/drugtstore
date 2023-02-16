@@ -1,2 +1,2 @@
-# drugtstore
+# drugstore
 creacion crud punto de venta
