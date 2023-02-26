@@ -1,0 +1,240 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
+ */
+package app;
+
+import static app.venta1.getConection;
+import static app.venta1.lbl_Articulo;
+import static app.venta1.txtCod_bar;
+import static app.venta1.lblVr_venta;
+import static app.venta1.txtcodproducto;
+
+import java.io.IOException;
+import javax.swing.table.DefaultTableModel;
+
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import java.awt.HeadlessException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+
+/**
+ *
+ * @author Misaky
+ */
+public final class Seleccionar extends javax.swing.JInternalFrame {
+
+      DefaultTableModel dtm1= new DefaultTableModel(); 
+      
+    public static final String URL = "jdbc:mysql://localhost:3306/products";
+    public static final String USERNAME = "root";
+    public static final String PASSWORD = "misionTic2022";
+    
+    PreparedStatement ps;
+    ResultSet rs;
+    /**
+     * Creates new form Seleccionar
+     */
+      
+    
+    public Seleccionar() {
+        initComponents();
+        String []  nombresColumnas = {"Articulo","Seleccione "};//Indica el nombre de las columnas en la tabla
+        
+        dtm1.setColumnIdentifiers(nombresColumnas);
+        tabla.setModel(dtm1);
+        addCheckBox(1,tabla);
+    }
+    //metodo para encontrar el chekbox escojido de la tabla
+    public void addCheckBox(int column, JTable table){
+        TableColumn tc = table.getColumnModel().getColumn(column);
+        tc.setCellEditor(table.getDefaultEditor(Boolean.class));
+        tc.setCellRenderer(table.getDefaultRenderer(Boolean.class));
+    }
+    
+//Este metodo seleciona la celda que se escoge del proceso de selecion del articulo en el checkbox  
+    public boolean IsSelected(int row, int column, JTable table)
+    {
+        return table.getValueAt(row, column) !=null;
+    }
+    
+    public void escojer(){
+        
+    for(int i=0;i<tabla.getRowCount();i++){
+        if (IsSelected(i,1,tabla))
+        {
+            venta1.lbl_Articulo.setText(tabla.getValueAt(i, 0).toString());
+        }
+    }    
+     Connection con = null;   
+     try {
+            con = getConection();
+            ps = con.prepareStatement("SELECT * FROM products WHERE articulo = ?");
+            ps.setString(1, lbl_Articulo.getText());
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                txtcodproducto.setText(rs.getString("codproducto"));
+                txtCod_bar.setText(rs.getString("cod_bar"));
+                lbl_Articulo.setText(rs.getString("articulo"));
+                lblVr_venta.setText(rs.getString("vr_venta"));
+            } else {
+                JOptionPane.showMessageDialog(null, "Medicamento no esta en base de datos");
+            }
+
+        } catch (HeadlessException | SQLException e) {
+
+            System.err.println(e);
+        }
+          
+        this.dispose();
+}
+    
+    
+ //el siguiente es el metodo necesario para seleccionar el articulo requerido en caso de no tener el codigo de barras      
+   private void buscarArticulo(String buscar){ 
+    Connection con = null;
+    ResultSet rs = null;   
+    int contador = 1; // Dedicado para acomular en número de registros que hay en la tabla
+    String [] registros = new String[1];                                   
+        try
+        {
+            con = getConection();
+            ps = con.prepareStatement( "SELECT * FROM products WHERE articulo LIKE '%"+buscar+"%'");
+            rs = (ResultSet) 
+            ps.executeQuery();
+            while(rs.next())
+            {
+                registros[0] = rs.getString("articulo");
+                dtm1.addRow(registros);
+                contador++;
+            }                      
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null,"Error al conectar. "+e.getMessage());
+        }
+         finally
+        {
+            try
+            {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            }
+            catch(SQLException e)
+            {
+                JOptionPane.showMessageDialog(null,e);
+            }
+        }
+              
+    }
+    
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabla = new javax.swing.JTable();
+        txtArticulos = new javax.swing.JTextField();
+        btnescojer = new javax.swing.JButton();
+
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setTitle("Articulos");
+
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        jScrollPane1.setViewportView(tabla);
+
+        txtArticulos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtArticulosActionPerformed(evt);
+            }
+        });
+
+        btnescojer.setText("Seleccionar");
+        btnescojer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnescojerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtArticulos, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnescojer)
+                .addGap(54, 54, 54))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtArticulos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnescojer))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void txtArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtArticulosActionPerformed
+        // TODO add your handling code here:
+        buscarArticulo(txtArticulos.getText());
+    }//GEN-LAST:event_txtArticulosActionPerformed
+
+    private void btnescojerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnescojerActionPerformed
+        // TODO add your handling code here:
+        escojer();
+    }//GEN-LAST:event_btnescojerActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnescojer;
+    private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JTable tabla;
+    private javax.swing.JTextField txtArticulos;
+    // End of variables declaration//GEN-END:variables
+}
