@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package app;
 
 import java.awt.HeadlessException;
@@ -55,9 +52,9 @@ public class venta1 extends javax.swing.JFrame {
     public static String fechaActual() {
 
         Date fecha = new Date();
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/YYYY - hh:mm:ss");
-
-        return formatoFecha.format(fecha);
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/YYYY - HH:mm:ss");
+        String hora =formatoFecha.format(fecha);
+        return (hora);
     }
 
     /**
@@ -113,6 +110,7 @@ public class venta1 extends javax.swing.JFrame {
     }
 
     void totalizar() {
+         lblFecha.setText(fechaActual());
         int numfact = 0;
         cantfilas = dtm.getRowCount();
         //creacion arreglo bidimensional para cargue de datos venta    
@@ -145,6 +143,40 @@ public class venta1 extends javax.swing.JFrame {
             System.err.println(e);
         }
 
+    }
+    
+    void devolucion(){
+        double dev=0;
+        double rest=0;
+        double dif=0;
+        dev = Double.parseDouble(lblTotal.getText());
+        rest = Double.parseDouble(txtPagacon.getText());
+        dif= rest-dev;
+        lblVueltas.setText(String.valueOf(dif));
+    }
+    
+    void buscar(){
+         Connection con = null;
+
+        try {
+            con = getConection();
+            ps = con.prepareStatement("SELECT * FROM products WHERE cod_bar = ?");
+            ps.setString(1, txtCod_bar.getText());
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                txtcodproducto.setText(rs.getString("codproducto"));
+                txtCod_bar.setText(rs.getString("cod_bar"));
+                lbl_Articulo.setText(rs.getString("articulo"));
+                lblVr_venta.setText(rs.getString("vr_venta"));
+            } else {
+                JOptionPane.showMessageDialog(null, "Codigo de barras no existe");
+            }
+
+        } catch (HeadlessException | SQLException e) {
+
+            System.err.println(e);
+        }
     }
 
     /**
@@ -179,6 +211,10 @@ public class venta1 extends javax.swing.JFrame {
         btnSeleccionar = new javax.swing.JButton();
         jDesktopPane2 = new javax.swing.JDesktopPane();
         lblVr_venta = new javax.swing.JLabel();
+        txtPagacon = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblVueltas = new javax.swing.JLabel();
         btnGuardar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         lblFactura = new javax.swing.JLabel();
@@ -202,6 +238,11 @@ public class venta1 extends javax.swing.JFrame {
         txtCod_bar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCod_barActionPerformed(evt);
+            }
+        });
+        txtCod_bar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCod_barKeyPressed(evt);
             }
         });
 
@@ -294,6 +335,23 @@ public class venta1 extends javax.swing.JFrame {
 
         lblVr_venta.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        txtPagacon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPagaconActionPerformed(evt);
+            }
+        });
+        txtPagacon.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPagaconKeyPressed(evt);
+            }
+        });
+
+        jLabel7.setText("Paga con:");
+
+        jLabel8.setText("Vueltas:");
+
+        lblVueltas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
         javax.swing.GroupLayout ventanaPrincipalLayout = new javax.swing.GroupLayout(ventanaPrincipal);
         ventanaPrincipal.setLayout(ventanaPrincipalLayout);
         ventanaPrincipalLayout.setHorizontalGroup(
@@ -341,18 +399,22 @@ public class venta1 extends javax.swing.JFrame {
                     .addGroup(ventanaPrincipalLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(ventanaPrincipalLayout.createSequentialGroup()
+                                .addGap(24, 24, 24)
                                 .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(ventanaPrincipalLayout.createSequentialGroup()
-                                        .addGap(24, 24, 24)
-                                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jbtnEliminar)
-                                            .addComponent(jbtnAnexar)))
-                                    .addComponent(jbtnlimpiarTabla)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 9, Short.MAX_VALUE)))))
+                                    .addComponent(jbtnEliminar)
+                                    .addComponent(jbtnAnexar)))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jbtnlimpiarTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
+                        .addGap(53, 53, 53)
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPagacon, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblVueltas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 19, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         ventanaPrincipalLayout.setVerticalGroup(
@@ -379,19 +441,33 @@ public class venta1 extends javax.swing.JFrame {
                     .addComponent(txtcodproducto)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ventanaPrincipalLayout.createSequentialGroup()
-                        .addComponent(jbtnAnexar)
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jbtnAnexar)
+                            .addComponent(jLabel7))
                         .addGap(18, 18, 18)
-                        .addComponent(jbtnEliminar)
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jbtnEliminar)
+                            .addComponent(txtPagacon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(jbtnlimpiarTabla)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jbtnlimpiarTabla)
+                            .addComponent(jLabel8))
+                        .addGroup(ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ventanaPrincipalLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(ventanaPrincipalLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblVueltas, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24))
+                    .addGroup(ventanaPrincipalLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 15, Short.MAX_VALUE)))
                 .addComponent(jDesktopPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -448,10 +524,11 @@ public class venta1 extends javax.swing.JFrame {
                 .addComponent(ventanaPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnGuardar)
-                        .addComponent(btnCancelar)
-                        .addComponent(lblArqueo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lblArqueo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnGuardar)
+                            .addComponent(btnCancelar)))
                     .addComponent(jLabel5)
                     .addComponent(lblFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnArqueo))
@@ -494,27 +571,7 @@ public class venta1 extends javax.swing.JFrame {
     }//GEN-LAST:event_lblFechaComponentAdded
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        Connection con = null;
-
-        try {
-            con = getConection();
-            ps = con.prepareStatement("SELECT * FROM products WHERE cod_bar = ?");
-            ps.setString(1, txtCod_bar.getText());
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                txtcodproducto.setText(rs.getString("codproducto"));
-                txtCod_bar.setText(rs.getString("cod_bar"));
-                lbl_Articulo.setText(rs.getString("articulo"));
-                lblVr_venta.setText(rs.getString("vr_venta"));
-            } else {
-                JOptionPane.showMessageDialog(null, "Codigo de barras no existe");
-            }
-
-        } catch (HeadlessException | SQLException e) {
-
-            System.err.println(e);
-        }
+       buscar();
 
     }//GEN-LAST:event_btnBuscarActionPerformed
 
@@ -523,7 +580,7 @@ public class venta1 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void txtCod_barActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCod_barActionPerformed
-        // TODO add your handling code here:
+     buscar();        // TODO add your handling code here:
     }//GEN-LAST:event_txtCod_barActionPerformed
 
     private void txtcodproductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcodproductoActionPerformed
@@ -546,12 +603,26 @@ public class venta1 extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnArqueoActionPerformed
 
+    private void txtPagaconKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPagaconKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPagaconKeyPressed
+
+    private void txtPagaconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPagaconActionPerformed
+       devolucion(); // TODO add your handling code here:
+    }//GEN-LAST:event_txtPagaconActionPerformed
+
+    private void txtCod_barKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCod_barKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCod_barKeyPressed
+
     private void limpiarCajas() {
 
         txtcodproducto.setText(null);
         txtCod_bar.setText(null);
         lbl_Articulo.setText(null);
         lblVr_venta.setText(null);
+        txtPagacon.setText(null);
+        lblVueltas.setText(null);
 
     }
 
@@ -601,6 +672,8 @@ public class venta1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbtnAnexar;
@@ -611,9 +684,11 @@ public class venta1 extends javax.swing.JFrame {
     private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblTotal;
     public static javax.swing.JLabel lblVr_venta;
+    private javax.swing.JLabel lblVueltas;
     public static javax.swing.JLabel lbl_Articulo;
     private javax.swing.JTable tblDatos;
     public static javax.swing.JTextField txtCod_bar;
+    private javax.swing.JTextField txtPagacon;
     public static javax.swing.JTextField txtcodproducto;
     public static javax.swing.JPanel ventanaPrincipal;
     // End of variables declaration//GEN-END:variables
