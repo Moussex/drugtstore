@@ -33,7 +33,7 @@ public class Arqueo extends javax.swing.JInternalFrame {
      */
     public Arqueo() {
         initComponents();
-        String []  nombresColumnas1 = {"Articulo","Precio","Fecha"};//Indica el nombre de las columnas en la tabla
+        String []  nombresColumnas1 = {"Articulo","Precio","Forma de Pago","Fecha"};//Indica el nombre de las columnas en la tabla
         dtm2.setColumnIdentifiers(nombresColumnas1);
         tabla2.setModel(dtm2);
         }
@@ -42,7 +42,7 @@ public class Arqueo extends javax.swing.JInternalFrame {
     Connection con = null;
     ResultSet rs = null;   
     int contador2 = 1; // Dedicado para acomular en número de registros que hay en la tabla
-    String [] registros2 = new String[3];                                   
+    String [] registros2 = new String[4];                                   
         try
         {
             con = getConection();
@@ -53,7 +53,8 @@ public class Arqueo extends javax.swing.JInternalFrame {
             {
                 registros2[0] = rs.getString("articulo");
                 registros2[1]=rs.getString("precio");
-                registros2[2]=rs.getString("fecha");
+                registros2[2]=rs.getString("formadepago");
+                registros2[3]=rs.getString("fecha");
                 dtm2.addRow(registros2);
                 contador2++;
             }                      
@@ -78,12 +79,12 @@ public class Arqueo extends javax.swing.JInternalFrame {
     }
        
 public void sumatoriaarqueo(){    
- double sum2 = 0;
- double pre2;
+ int sum2 = 0;
+ int pre2;
         
        int cantfilas2 = dtm2.getRowCount();
         for (int i = 0; i < cantfilas2; i++) {
-            pre2 = Double.parseDouble((String) dtm2.getValueAt(i, 1));
+            pre2 = Integer.parseInt((String) dtm2.getValueAt(i, 1));
             sum2 = sum2 + pre2;
             lblArqueo.setText(String.valueOf(sum2));
         }
