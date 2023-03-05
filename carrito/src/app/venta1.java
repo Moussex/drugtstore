@@ -74,6 +74,7 @@ public class venta1 extends javax.swing.JFrame {
         //creacion tabla para facturacion productos
         dtm.setColumnIdentifiers(titulo);
         tblDatos.setModel(dtm);
+        
     }
 
     void anexar() {
@@ -87,10 +88,12 @@ public class venta1 extends javax.swing.JFrame {
             pre = Integer.parseInt((String) dtm.getValueAt(i, 2));
             sum = sum + pre;
             lblTotal.setText(String.valueOf(sum));
+            
         }
     }
 
     void eliminar() {
+        
         int fila = tblDatos.getSelectedRow();
         dtm.removeRow(fila);
 
@@ -146,7 +149,7 @@ public class venta1 extends javax.swing.JFrame {
             if (anu > 0) {
                 JOptionPane.showMessageDialog(null, "Venta guardada");
             } else {
-                JOptionPane.showMessageDialog(null, "No ha anexado ningun producto");
+                JOptionPane.showMessageDialog(null,"No ha anexado ningun producto");
             }
 
         } catch (HeadlessException | SQLException e) {
@@ -166,7 +169,10 @@ public class venta1 extends javax.swing.JFrame {
             dev = Integer.parseInt(lblTotal.getText());
             rest = Integer.parseInt(txtPagacon.getText());
             dif = rest - dev;
-            lblVueltas.setText(String.valueOf(dif));
+            if (dev > rest){
+                 JOptionPane.showMessageDialog(null, "No le alcanza para el valor a pagar","ERROR",0);
+            }else{
+            lblVueltas.setText(String.valueOf(dif));}
         } else {
             JOptionPane.showMessageDialog(null, "No es un pago en efectivo");
         }
